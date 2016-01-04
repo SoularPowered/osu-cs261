@@ -1,7 +1,7 @@
 /* CS261- Assignment 1 - Q.5*/
 /* Name: Shawn S Hillyer
  * Date: 01/03/2016
- * Solution description: Converts a string entered by user to "stickycaps"
+ * Solution description: Converts a single word entered by user to "stickycaps"
  * e.g. StickyCaps  returns sTICKYcAPS
  */
 
@@ -38,20 +38,20 @@ void sticky(char* word){
          }
 
          ++i; // Move forward one character
-         
+
        } while (current_ch != '\0');
      }
 }
 
 int main(){
     /*Read word from the keyboard using scanf*/
-    char* word;
+    char word[256];
     scanf("%s", word);
 
     /*Call sticky*/
     sticky(word);
 
     /*Print the new word*/
-    printf("%s", word);
+    printf("%s\n", word);
     return 0;
 }

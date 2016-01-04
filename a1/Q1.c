@@ -123,6 +123,7 @@ int main(){
   stud = allocate();
 
   /*call generate*/
+  srand((unsigned)time(NULL));
   generate(stud);
 
   /*call output*/

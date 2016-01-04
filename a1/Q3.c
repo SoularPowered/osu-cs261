@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h> // to use malloc
+#include <stdlib.h> // to use malloc - getting warnings/errors without this.
 
 void sort(int* number, int n){
     /*Sort the given array number , of length n*/
@@ -51,17 +51,17 @@ int main(){
 
     /*Print the contents of the array.*/
 	for (i = 0; i < n; i++) {
-		printf("%d ", values[i]);
+		printf("%d\n", values[i]);
 	}
 
     /*Pass this array along with n to the sort() function of part a.*/
 	sort(values, n);
 
     /*Print the contents of the array.*/
-	printf("Values after sorting:\n");
+	printf("\nValues after sorting:\n");
 
 	for (i = 0; i < n; i++) {
-		printf("%d ", values[i]);
+		printf("%d\n", values[i]);
 	}
     return 0;
 }
