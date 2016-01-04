@@ -1,33 +1,70 @@
 /* CS261- Assignment 1 - Q.4*/
-/* Name:
- * Date:
- * Solution description:
- */
- 
+/* Name: Shawn S Hillyer
+* Date: 01/03/2016
+* Solution description:  
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
 struct student{
-	int id;
-	int score;
+  int id;
+  int score;
 };
 
 void sort(struct student* students, int n){
-     /*Sort the n students based on their score*/     
+  /*Sort the n students based on their score*/
+  int i;  // Loop counter
+
+  /* Bubble Sort implementation */
+  enum boolean { false, true };
+  // struct student* temp = (struct student *)malloc(sizeof(struct student));
+  enum boolean swapped;
+
+  do {
+    swapped = false;
+
+    /* Check pairs and swap if any students at index i is greater than the value at i+1 */
+    for (i = 0; i < n - 1; i++) {
+
+      if (students[i].score > students[i+1].score) {
+        /* Swap the values */
+        struct student temp = students[i];
+        students[i] = students[i + 1];
+        students[i + 1] = temp;
+
+        swapped = true;
+      }
+    }
+  } while (swapped);
 }
 
 int main(){
-    /*Declare an integer n and assign it a value.*/
-    
-    /*Allocate memory for n students using malloc.*/
-    
-    /*Generate random IDs and scores for the n students, using rand().*/
-    
-    /*Print the contents of the array of n students.*/
+  /*Declare an integer n and assign it a value.*/
+  int n = 7; // number of student records
+  int i;  // Loop counter
 
-    /*Pass this array along with n to the sort() function*/
-    
-    /*Print the contents of the array of n students.*/
-    
-    return 0;
+  /*Allocate memory for n students using malloc.*/
+	struct student* studs = (struct student *) malloc(n * sizeof(struct student));
+
+  /*Generate random IDs and scores for the n students, using rand().*/
+	for (i = 0; i < n; i++) {
+		studs[i].id = rand() + 1;
+		studs[i].score = rand() % 101;
+	}
+
+  /*Print the contents of the array of n students.*/
+  for (i = 0; i < n; i++) {
+    printf("ID%d score%d\n", studs[i].id, studs[i].score);
+  }
+
+  /*Pass this array along with n to the sort() function*/
+  sort(studs, n);
+
+  /*Print the contents of the array of n students.*/
+  for (i = 0; i < n; i++) {
+    printf("ID%d score%d\n", studs[i].id, studs[i].score);
+  }
+
+  return 0;
 }
