@@ -123,7 +123,8 @@ int main(){
   stud = allocate();
 
   /*call generate*/
-  srand((unsigned)time(NULL));
+  // srand((unsigned)time(NULL)); 
+  // note: cannot add the appropriate headers to seed random with time(), per assignment instructions
   generate(stud);
 
   /*call output*/
