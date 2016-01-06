@@ -15,6 +15,11 @@ struct student{
   int score;
 };
 
+
+/* allocate() returns a pointer to 10 strudents dynamically allocated memory
+ * Preconditions: None
+ * Postconditions: Returns pointer to memory for 10 students
+ */
 struct student* allocate(){
   int num_students = 10;
 
@@ -25,6 +30,12 @@ struct student* allocate(){
   return students;
 }
 
+
+/* generate() assigns scors and ID's for 10 students pointed to by argument
+ * Preconditions: students must point to 10 students
+ * Postconditions: + All 10 students will have a unique & random id from [1-10]
+ *                 + All 10 students will have a random score from [0=100]
+ */
 void generate(struct student* students){
   enum boolean { false, true };
 
@@ -34,7 +45,7 @@ void generate(struct student* students){
       rand_id;    // random student ID from 1 to 10
   enum boolean is_unique_id;	// Track if ID is unique or not
 
-  /*Generate random ID and scores for ten students, ID being between 1 and 10, scores between 0 and 100*/
+  /*Generate random ID and scores for ten students*/
   for (i = 0; i < num_students; i++) {
     /* Make ID and verify it hasn't already been used */
     do {
@@ -56,6 +67,11 @@ void generate(struct student* students){
   }
 }
 
+
+/* output() Prints records for all 10 students (ID and Score)
+ * Preconditions: None
+ * Postconditions: Output will be in format per comment in function
+ */
 void output(struct student* students){
   /*Output information about the ten students in the format:
   ID1 Score1
@@ -72,6 +88,11 @@ void output(struct student* students){
 
 }
 
+
+/* summary() prints summary of aggregated data for  10 students
+ * Preconditions: students must point to 10 students
+ * Postconditions: The minimum, maximum, average scores will print to screen
+ */
 void summary(struct student* students){
   /*Compute and print the minimum, maximum and average scores of the ten students*/
   int min,	// Minimum score
@@ -108,6 +129,11 @@ void summary(struct student* students){
   }
 }
 
+
+/* deallocate() frees memory allocated at stud
+ * Preconditions: None
+ * Postconditions: Free the memory
+ */
 void deallocate(struct student* stud){
   /*Deallocate memory from stud*/
   if (stud != NULL) {
@@ -116,6 +142,7 @@ void deallocate(struct student* stud){
 
 }
 
+
 int main(){
   struct student* stud = NULL; // Pointer to students
 
@@ -123,7 +150,7 @@ int main(){
   stud = allocate();
 
   /*call generate*/
-  // srand((unsigned)time(NULL)); 
+  // srand((unsigned)time(NULL));
   // note: cannot add the appropriate headers to seed random with time(), per assignment instructions
   generate(stud);
 
