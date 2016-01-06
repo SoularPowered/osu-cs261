@@ -18,6 +18,10 @@ char toLowerCase(char ch){
      return ch-'A'+'a';
 }
 
+/* sticky() inverts the case of all characters of string 'word'
+ * Precondition: none
+ * Postcondition:  If word!=NULL, inverts case of all letters in word by reference.
+ */
 void sticky(char* word){
      /*Convert to sticky caps*/
      if (word != NULL) {

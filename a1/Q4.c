@@ -1,8 +1,8 @@
 /* CS261- Assignment 1 - Q.4*/
 /* Name: Shawn S Hillyer
-* Date: 01/03/2016
-* Solution description: Sort student records based on score.
-*/
+ * Date: 01/03/2016
+ * Solution description: Sort student records based on score.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +12,10 @@ struct student{
   int score;
 };
 
+/* sort array of struct students of size n using bubble sort
+ * Preconditions: n>=0, students !=0
+ * Postconditoins: array will be sorted in ascending order by student.score
+ */
 void sort(struct student* students, int n){
   /*Sort the n students based on their score*/
   int i;  // Loop counter
@@ -45,10 +49,10 @@ int main(){
   int i;  // Loop counter
 
   /*Allocate memory for n students using malloc.*/
-	struct student* studs = (struct student *) malloc(n * sizeof(struct student));
+  struct student* studs = (struct student *) malloc(n * sizeof(struct student));
 
   /*Generate random IDs and scores for the n students, using rand().*/
-  srand((unsigned)time(NULL));
+  //srand((unsigned)time(NULL));
 
 	for (i = 0; i < n; i++) {
 		studs[i].id = rand() + 1;
