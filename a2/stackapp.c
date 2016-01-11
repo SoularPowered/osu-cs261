@@ -31,6 +31,8 @@ char nextChar(char* s)
 */
 int isBalanced(char* s)
 {
+	printf("Inside isBalanced\n");
+
 	/* FIXME: You will write this function */
 	assert(s != NULL);
 	/* Set up a stack for the parens */
