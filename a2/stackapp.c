@@ -82,6 +82,11 @@ int isBalanced(char* s)
 		} 
 	} while(next_char != '\0' && is_still_balanced);
 
+	/* If stack is not empty, there are unmatched closing parenthesis */
+	if (!isEmptyDynArr(paren_stack)) {
+		is_still_balanced = 0;	
+	}
+
 	return is_still_balanced;
 }
 
