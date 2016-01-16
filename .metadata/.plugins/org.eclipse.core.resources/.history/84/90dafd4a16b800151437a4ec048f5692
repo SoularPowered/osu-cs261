@@ -1,0 +1,101 @@
+Shawn S Hillyer
+CS 261-400
+Date 1/10/2016
+amortizedAnalysis.txt
+ 
+Assignment 2, Part 2
+----------------------------------------------------------------------------------------------------------------------------------------
+1. How many cost units are spent in the entire process of performing 32 consecutive push operations on an empty array which starts
+out at capacity 8, assuming that the array will double in capacity each time a new item is added to an already full dynamic array? As
+N (ie. the number of pushes) grows large, under this strategy for resizing, what is the big-oh complexity for a push?
+
+	 8c operations to add the first 8 elements. 
+	+8c operations to reallocate and increase capacity to 16
+	+1c to add the element just pushed
+	<capacity == 16, size == 9>
+	+7c to add the additional 7 elements to get to the 16th element
+	+16c to reallocate and increase capacity to 32
+	+1c to add the element just pushed
+	<capacity == 32, size == 17>
+	+15c to add the elements to get to the 32nd push
+	
+	8+8+1+7+16+1+15 = 56 total cost units per 32 consecutive pushes 
+	
+	= 1.75 cost units per push. 
+	
+	big-oh complexity is O(1)+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+2. How many cost units are spent in the entire process of performing 32 consecutive push operations on an empty array which starts out
+at capacity 8, assuming that the array will grow by a constant 2 spaces each time a new item is added to an already full dynamic
+array? As N (ie. the number of pushes) grows large, under this strategy for resizing, what is the big-oh complexity for a push?
+
+8c to push first 8 values. 					Size ==  8, capacity ==  8
++9c to push 9th value and reallocate. 		Size ==  9, capacity == 10
++1c to push 10th value. 					Size == 10, capacity == 10
++11c to push 11th value and reallocate. 	Size == 11, capacity == 12
++1c to push 12th value. 					Size == 12, capacity == 12
++13c to push the 13th value and reallocate. Size == 13, capacity == 14
++ 1c to push the 14th value. 				Size == 14, capacity == 14
++15c to push the 15th value and reallocate. Size == 15, capacity == 16
++ 1c to push the 16th value. 				Size == 16, capacity == 16
++17c to push the 17th value and reallocate. Size == 17, capacity == 18
++ 1c to push the 18th value. 				Size == 18, capacity == 18
++19c to push the 19th value and reallocate. Size == 19, capacity == 20
++ 1c to push the 20th value. 				Size == 20, capacity == 20
++21c to push the 21th value and reallocate. Size == 21, capacity == 22
++ 1c to push the 22th value.				Size == 22, capacity == 22
++23c to push the 23th value and reallocate. Size == 23, capacity == 24
++ 1c to push the 24th value. 				Size == 24, capacity == 24
++25c to push the 25th value and reallocate. Size == 25, capacity == 26
++ 1c to push the 26th value. 				Size == 26, capacity == 26
++27c to push the 27th value and reallocate. Size == 27, capacity == 28
++ 1c to push the 28th value. 				Size == 28, capacity == 28
++29c to push the 29th value and reallocate. Size == 29, capacity == 30
++ 1c to push the 30th value. 				Size == 30, capacity == 30
++31c to push the 31st value and reallocate. Size == 31, capacity == 32
++ 1c to push the 32nd value. 				Size == 32, capacity == 32
+
+260 total cost for the operations, to push 32 values
+8.125 cost/push
+
+Every 2 operations costs n/2 addtional cost units on top of the already incurred cost.
+
+So the 32nd element cost (1)+31+1+29+1+27+1+25+1+23+1+21+1+19+1+17+1+15+1+13+1+11+1+9+8
+
+=32+30+28+26+24+22+...+14+12+10 + 8
+=8 + 2(5+6+7+...+14+15+16)
+
+generalizing, =8 + 2[5+6+7+...+(n-2)+(n-1)+(n)] 
+= 8 + 2[5+6+7+...+(n-2)+(n-1)+(n) - (1 + 2 + 3 + 4)] 
+= 8 + 2[1+2+3+4+5+6+7+...+(n-2)+(n-1)+(n) - 10]
+= 8 + 2[n(n+1)/2 - 10]
+= 8 + 2[(n^2+n)/2 - 10]
+= 8 + (2n^2+2n)/2 - 20
+
+So the formula has a most dominate term that is (2n^2+2n)/2, which in terms of complexity, is equivalent to O(n^2).
+
+This is intuitive, since doubling the size of the array costs a lot more in our sample calculation. 
+Going from 0 to 16 elements costs 60 units. It costs 260 units to double the size to 32. 
+That's about 4x as many operations, which suggests quadratic time (O(n^2))
+
+----------------------------------------------------------------------------------------------------------------------------------------
+3. Suppose that a dynamic array stack doubles its capacity when it is full, and shrinks (on Pop only) its capacity by
+half when the array is half full or less. Can you devise a sequence of N push() and pop() operations which will result in poor
+performance (O(N^2) total cost)? How might you adjust the array's shrinking policy to avoid this? (Hint: You may assume that the
+initial capacity of the array is N/2.)
+
+
+Suppose the current capacity is 8, and the current size is 5.
+If we pop at this point, we invoke the shrinking operation, which will take 4 operations to allocate the remaining 4 elements. 
+Capacity is now 4, size is 4.
+Cost was 1 operation to pop off, + 4 to copy the new vlaues
+Then, if we push immediately afterwards enough times to cause a doiubling, we'd have to push only 1 time. Reallocation costs 4 + 1 for the push. 5 cost
+Then we pop again, 5 more, and push again, 5 more, and so forth.
+
+So by teter-tottering in the middle of the array, every operation is going to cost 5 operations. 
+
+To compensate for this, I'd only shrink when the array is at, say, 1/4th of capacity. That way the shrinking would cause the array to still be 
+twice as large as was previously needed

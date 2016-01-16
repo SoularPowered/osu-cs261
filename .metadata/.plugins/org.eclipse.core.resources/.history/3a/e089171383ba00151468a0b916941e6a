@@ -1,0 +1,72 @@
+#ifndef _TYPE
+#define _TYPE
+#define TYPE int
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Defines a link as having a value and a link to next node */
+struct link {
+	TYPE value;
+	struct link * next;
+};
+
+/* Defines a linkedListStack as having a link to a firstLink */
+struct linkedListStack {
+	struct link *firstLink;
+};
+
+
+/* "constructor"
+ * sets first link to point to null  */
+void linkedListStackInit (struct linkedListStack * s) {
+	s->firstLink = NULL;
+}
+
+
+/* Frees the memory for a stack by popping values.
+ * Free should be called inside of linkedListStackPop(), though
+ */
+void linkedListStackFree (struct linkedListStack *s) {
+	while (! linkedListStackIsEmpty(s))
+		linkedListStackPop(s);
+}
+
+
+/* Push a value onto the stack */
+void linkedListStackPush (struct linkedListStack *s, TYPE d) {
+	assert(s != NULL);
+
+	struct link * newLink = (struct link *) malloc(sizeof(struct link));
+	assert (newLink != NULL); // makes sure memory allocation didn't fail
+	// Initialize the newLink
+	newLink.value = d;
+	newLink.next = NULL;
+
+	// Handle case where list is empty
+	if (s->firstLink == NULL) { // or: if(linkedListStackIsEmpty(s));
+		s->firstLink = newLink;
+	}
+	// If stack not empty, make current firstLink point down to the new link
+	else {
+		newLink->next = s->firstLink;
+	}
+}
+
+double linkedListStackTop (struct linkedListStack *s) {
+
+
+}
+
+
+void linkedListStackPop (struct linkedListStack *s) {
+
+
+}
+
+
+int linkedListStackIsEmpty (struct linkedListStack *s) {
+
+
+}

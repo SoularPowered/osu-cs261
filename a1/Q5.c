@@ -48,6 +48,8 @@ void sticky(char* word){
 }
 
 int main(){
+    printf("Enter a word and I will convert it using sTiCkYcApS:\n");
+
     /*Read word from the keyboard using scanf*/
     char word[256];
     scanf("%s", word);

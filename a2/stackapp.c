@@ -87,7 +87,7 @@ int isBalanced(char* s)
 		is_still_balanced = 0;	
 	}
 
-	freeDynArr(paren_stack);
+	deleteDynArr(paren_stack);
 
 	return is_still_balanced;
 }

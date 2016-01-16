@@ -54,10 +54,34 @@ int main(){
   /*Generate random IDs and scores for the n students, using rand().*/
   //srand((unsigned)time(NULL));
 
-	for (i = 0; i < n; i++) {
-		studs[i].id = rand() + 1;
-		studs[i].score = rand() % 101;
-	}
+  enum boolean { false, true };
+
+  int num_students = 10;
+  int i,      // Counter for allocation loop
+      j,      // Counter for inner loop to make sure ID not already assigned
+      rand_id;    // random student ID from 1 to 10
+  enum boolean is_unique_id;  // Track if ID is unique or not
+
+  /*Generate random ID and scores for ten students*/
+  for (i = 0; i < num_students; i++) {
+    /* Make ID and verify it hasn't already been used */
+    do {
+      is_unique_id = true;
+      rand_id = (rand() % 10) + 1;  // Generate the random id
+
+      /* Compare to all students prior to current student being generated */
+      j = 0;
+      while (j < i && is_unique_id) {
+        if (rand_id == studs[j].id) {
+          is_unique_id = false;
+        }
+        ++j;
+      }
+    } while (!is_unique_id);
+
+    studs[i].id = rand_id;
+    studs[i].score = rand() % 101;
+  }
 
   /*Print the contents of the array of n students.*/
   for (i = 0; i < n; i++) {
