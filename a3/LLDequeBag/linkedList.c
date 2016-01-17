@@ -28,12 +28,12 @@ struct linkedList {
 
 void _initList (struct linkedList *lst) {
   /* FIXME: you must write this */
-	assert(list != NULL);
+	assert(lst != NULL);
 
 	// Allocate memory for the links
-	list->firstLink = malloc(sizeof(struct dlink));
+	list->firstLink = malloc(sizeof(struct DLink));
 	assert(list->firstLink != 0);
-	list->lastLink = malloc(sizeof(struct dlink));
+	list->lastLink = malloc(sizeof(struct DLink));
 	assert(list->lastLink);
 	
 	// Point Head sentinel's next to the tail, tail's prev to the head, and other sto null
@@ -121,7 +121,7 @@ void addBackList(struct linkedList *lst, TYPE e) {
   
 	/* FIXME: you must write this */
 
-	_addLinkBefore(q, list->lastLink->prev, e);  
+	_addLinkBefore(lst, lst->lastLink->prev, e);  
 	// Note --> Sisze is incremented in the helper function
 }
 
@@ -137,9 +137,9 @@ TYPE frontList (struct linkedList *lst) {
 	/* FIXME: you must write this */
 
 	assert(lst != NULL);
-	assert(lst.size > 0);
+	assert(lst->size > 0);
 
-	return lst->frontList->next->value;
+	return lst->firstLink->next->value;
 }
 
 /*
@@ -154,7 +154,7 @@ TYPE backList(struct linkedList *lst) {
 	/* FIXME: you must write this */
 
 	assert(lst != NULL);
-	assert(lst.size > 0);
+	assert(lst->size > 0);
 
 	return lst->lastLink->prev->value;
 }
@@ -175,14 +175,14 @@ void _removeLink(struct linkedList *lst, struct DLink *l) {
 	assert(l != NULL);
 
 	// Make lnk's next node's previous point to link's previous, and vice versa
-	l->next->prev = link->prev;
-	link->prev->next = link->next;
+	l->next->prev = lnk->prev;
+	lnk->prev->next = lnk->next;
 
 	l->next = NULL;
-	link->prev = NULL;
-	free(lnk);
+	lnk->prev = NULL;
+	free(l);
 
-	--(list->size);
+	--(lst->size);
 }
 
 /*
@@ -276,7 +276,7 @@ void addList(struct linkedList *lst, TYPE v) {
 int containsList (struct linkedList *lst, TYPE e) {
 	/* FIXME: you must write this */
 	assert(lst != NULL);
-	assert(list->size > 0);
+	assert(lst->size > 0);
 
 	struct DLink *iter = lst->firstLink->next; // iterator
 	while (iter != lst->lastLink) {
@@ -302,7 +302,7 @@ int containsList (struct linkedList *lst, TYPE e) {
 void removeList (struct linkedList *lst, TYPE e) {
 	/* FIXME: you must write this */
 	assert(lst != NULL);
-	assert(list->size > 0);
+	assert(lst->size > 0);
 
 	int valFound = 0; // boolean substitute
 
