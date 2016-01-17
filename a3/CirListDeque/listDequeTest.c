@@ -38,6 +38,6 @@ int main(){
 	printCirListDeque(q);
 	printf(" \n");
 
-	// free(q);
+	free(q);
 	return 0;
 }
