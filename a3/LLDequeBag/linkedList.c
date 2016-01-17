@@ -31,16 +31,16 @@ void _initList (struct linkedList *lst) {
 	assert(lst != NULL);
 
 	// Allocate memory for the links
-	list->firstLink = malloc(sizeof(struct DLink));
-	assert(list->firstLink != 0);
-	list->lastLink = malloc(sizeof(struct DLink));
-	assert(list->lastLink);
+	lst->firstLink = malloc(sizeof(struct DLink));
+	assert(lst->firstLink != 0);
+	lst->lastLink = malloc(sizeof(struct DLink));
+	assert(lst->lastLink);
 	
 	// Point Head sentinel's next to the tail, tail's prev to the head, and other sto null
-	list->firstLink->next = list->lastLink;
-	list->lastLink->prev = list->firstLink;
-	list->lastLink->next = list->firstLink->prev = NULL;
-	list->size = 0;
+	lst->firstLink->next = lst->lastLink;
+	lst->lastLink->prev = lst->firstLink;
+	lst->lastLink->next = lst->firstLink->prev = NULL;
+	lst->size = 0;
 }
 
 /*
@@ -175,11 +175,11 @@ void _removeLink(struct linkedList *lst, struct DLink *l) {
 	assert(l != NULL);
 
 	// Make lnk's next node's previous point to link's previous, and vice versa
-	l->next->prev = lnk->prev;
-	lnk->prev->next = lnk->next;
+	l->next->prev = l->prev;
+	l->prev->next = l->next;
 
 	l->next = NULL;
-	lnk->prev = NULL;
+	l->prev = NULL;
 	free(l);
 
 	--(lst->size);
@@ -196,7 +196,7 @@ void _removeLink(struct linkedList *lst, struct DLink *l) {
 void removeFrontList(struct linkedList *lst) {
    	/* FIXME: you must write this */
 	assert(lst != NULL);
-	assert(lst.size > 0);
+	assert(lst->size > 0);
 
    	_removeLink(lst, lst->firstLink->next);
 }
@@ -312,7 +312,7 @@ void removeList (struct linkedList *lst, TYPE e) {
 			// remove value
 			_removeLink(lst, iter);
 
-			--(list->size);
+			--(lst->size);
 			valFound = 1;
 		}
 
