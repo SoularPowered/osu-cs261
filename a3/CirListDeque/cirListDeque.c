@@ -42,8 +42,10 @@ void _removeLink(struct cirListDeque *q, struct DLink *lnk);
 void _initCirListDeque (struct cirListDeque *q)  {
   	/* FIXME: you must write this */	
 	assert(q != NULL);
-	q->Sentinel = (struct DLink *) malloc(sizeof(struct Dlink));
-	q->Sentinel->next = q->Sentinel->prev = sent;
+
+	// make Sentinel node and point next/prev to itself
+	q->Sentinel = (struct DLink *) malloc(sizeof(struct DLink));
+	q->Sentinel->next = q->Sentinel->prev = q->Sentinel;
 	q->size = 0;
 }
 
@@ -91,10 +93,12 @@ void _addLinkAfter(struct cirListDeque *q, struct DLink *lnk, TYPE v) {
 	assert(lnk != NULL);
 	// assert(lnk is in q);
 	
+	// Setup new node and link to link and link's old next
 	struct DLink * newLink = _createLink(v);
 	newLink->prev = lnk;
-	newLink->next = lnk->next
+	newLink->next = lnk->next;
 	
+	// Relink the next node to point to link, and the previous link to point back to newLink
 	newLnk->next->prev = newLink;
 	lnk->next = newLink
 }
@@ -272,15 +276,15 @@ void reverseCirListDeque(struct cirListDeque *q) {
 	assert(q->size > 0);	 
 
 	// start at the 'sentinel' and swap the next and previous pointers
-	struct DLink * current, temporary; 
+	struct DLink * current, *temporary; 
 	current = q->Sentinel;
 
 	// Iterate, starting at the Sentinel, until we arrive back at Sentinel
 	do {
 		// basic swap algorithm (temp = A, A = B, B = temp)
 		temporary = current->next;           // temp is the next link in circle
-		current->next = current->previous;   // make next point to the 'previous' link
-		current->previous = temporary;       // make previous link point to the old 'next' link
+		current->next = current->prev;   // make next point to the 'previous' link
+		current->prev = temporary;       // make previous link point to the old 'next' link
 
 		current = temporary;                 // go to the next node in the sequence
 	} while (current != q->Sentinel);
