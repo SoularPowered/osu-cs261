@@ -99,8 +99,8 @@ void _addLinkAfter(struct cirListDeque *q, struct DLink *lnk, TYPE v) {
 	newLink->next = lnk->next;
 	
 	// Relink the next node to point to link, and the previous link to point back to newLink
-	newLnk->next->prev = newLink;
-	lnk->next = newLink
+	newLink->next->prev = newLink;
+	lnk->next = newLink;
 }
 
 /* Adds a link to the back of the deque
