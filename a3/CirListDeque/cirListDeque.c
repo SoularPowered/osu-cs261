@@ -73,8 +73,7 @@ struct DLink * _createLink (TYPE val) {
 	newLink->value = val;
 
 	/*temporary return value..you may need to change it*/
-	return(newLink);	 
-
+	return(newLink);
 }
 
 /* Adds a link after another link
@@ -232,6 +231,7 @@ void freeCirListDeque(struct cirListDeque *q) {
 		garbage = iter;
 	}
 	q->size = 0;
+	free(q);
 }
 
 /* Check whether the deque is empty
