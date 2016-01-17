@@ -259,10 +259,10 @@ void printCirListDeque(struct cirListDeque *q) {
 	assert(q->size > 0);
 
 	struct DLink *iter = q->Sentinel->prev;
-	while (iter != NULL) {
+	do  {
 		printf("%g\n", iter->value);
 		iter = iter->prev;
-	}
+	} while (iter != q->Sentinel);
 }
 
 /* Reverse the deque
