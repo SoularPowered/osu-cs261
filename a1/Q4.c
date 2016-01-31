@@ -46,8 +46,7 @@ void sort(struct student* students, int n){
 int main(){
   /*Declare an integer n and assign it a value.*/
   int n = 7; // number of student records
-  int i;  // Loop counter
-
+  
   /*Allocate memory for n students using malloc.*/
   struct student* studs = (struct student *) malloc(n * sizeof(struct student));
 

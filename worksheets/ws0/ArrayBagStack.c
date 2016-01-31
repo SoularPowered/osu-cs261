@@ -8,10 +8,10 @@
 
 /* Set all elements of the array to 0 and set count to 0 */
 void initArray (struct arrayBagStack * b){
-  int i = 0;  // Loop counter
-  for (i = 0; i < 100; i++) {
-    b->data[i] = 0;
-  }
+  // int i = 0;  // Loop counter
+  // for (i = 0; i < 100; i++) {
+  //   b->data[i] = 0;
+  // }
 
   b->count = 0;
 }

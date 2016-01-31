@@ -38,6 +38,5 @@ int main(){
 	printCirListDeque(q);
 	printf(" \n");
 
-	free(q);
 	return 0;
 }

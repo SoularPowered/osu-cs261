@@ -44,7 +44,7 @@ void listQueueAddBack (struct listQueue *q, TYPE e) {
 	newEnd.next = NULL;
 
 	// point the lastLink's next
-	(q->lastLink)->next = newEnd; 
+	q->lastLink->next = newEnd; 
 
 	q->lastLink = newEnd;
 }
@@ -56,7 +56,7 @@ void listQueueAddBack (struct listQueue *q, TYPE e) {
 TYPE listQueueFront (struct listQueue *q) {
 	assert(q != NULL);
 	if (!listQueueIsEmpty(q) {
-		struct link* firstReal = (q->firstLink)->next;
+		struct link* firstReal = q->firstLink->next;
 		return firstReal->value;
 		/* return ((q->firstLink)->next)->value;  */  // Should also work :)
 	}

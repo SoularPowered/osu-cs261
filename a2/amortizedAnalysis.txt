@@ -23,7 +23,9 @@ N (ie. the number of pushes) grows large, under this strategy for resizing, what
 	+15c to add the elements to get to the 32nd push
 	
 	8+8+1+7+16+1+15 = 56 total cost units per 32 consecutive pushes 
-	
+
+	32 + 8 + 16
+
 	= 1.75 cost units per push. 
 	
 	big-oh complexity is O(1)+
@@ -61,6 +63,9 @@ array? As N (ie. the number of pushes) grows large, under this strategy for resi
 + 1c to push the 30th value. 				Size == 30, capacity == 30
 +31c to push the 31st value and reallocate. Size == 31, capacity == 32
 + 1c to push the 32nd value. 				Size == 32, capacity == 32
+
+
+
 
 
 === SOLUTION ===

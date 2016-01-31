@@ -32,16 +32,26 @@ void dequeAddFront (struct deque *d, TYPE newValue) {
 	if (d->size >= d->capacity) {
 		_dequeSetCapacity(d, 2*d->capacity);
 	}
-	int insertIndex = d->start + d->size;
-	if (insertIndex >= d->capacity) {
-		insertIndex -= d->capacity;
+
+	int insertIndex = --(d->start);
+	if (insertIndex < 0) {
+		insertIndex += d->capacity;
 	}
+
 	d[insertIndex] = newValue;
+	
+	d->start = insertIndex;
 }
 
 
 void dequeAddBack (struct deque *d, TYPE newValue) {
 	if (d->size >= d->capacity) _dequeSetCapacity(d, 2* d->capacity);
+
+	int insertIndex = d->start + d->size;
+	if (insertIndex >= d->capacity) {
+		insertIndex -= d->capacity;
+	}
+	d[insertIndex] = newValue;
 }
 
 
@@ -99,8 +109,7 @@ TYPE dequeBack (struct deque *d) {
 
 
 void dequeRemoveFront (struct deque *d) {
-	++(d->size);
-	
+	++(d->start);	
 }
 
 
