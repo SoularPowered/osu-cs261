@@ -31,29 +31,49 @@ struct node * _nodeAddBST (struct node *current, TYPE newValue) {
 
 	// if start is null then 
 	// 		return a new Node with newValue
+	struct node* newNode;
 	if (current == NULL) {
-		struct node* newRoot = (struct node *) malloc(sizeof(struct node));
-		newRoot->value = newValue;
-		newRoot->left = newRoot->rigt = NULL;
-		return newRoot;
+		newNode = (struct node *) malloc(sizeof(struct node));
+		assert(newNode != NULL);
+		newNode->value = newValue;
+		newNode->left = newNode->right = NULL;
+		return newNode;
 	}
 
 	// otherwise if newValue is less than the value at start then
 	// 	  set the left child to be the value returned by add(leftChild, newValue)
-	else if (newValue < current->value) {
+	if (newValue < current->value) {
 		current->left = _nodeAddBST(current->left, newValue);
 	}
 
 	// otherwise 
 	// 	set the right child to be add(rightChild, newValue)
-	else {
+	else if (newValue >= current->value) {
 		current->right = _nodeAddBST(current->right, newValue);
 	}
-
 
 	return current;
 }
 
+int containsBST (struct binarySearchTree *tree, TYPE d) {
+	struct Node * iter = tree->root;
+
+	while (iter != NULL) {
+		if (iter->value == 0) {
+			return 1; // true
+		}
+		// else if the search val is < current value, search left subtree
+		else if (iter->value < 0) {
+			iter = iter->left;
+		}
+		// else if search val is greater, search right subtree
+		else {
+			iter = iter->right;
+		}
+	}
+	// If we reach a null pointer, value not found - return false
+	return 0;
+}
 
 
 void removeBST (struct binarySearchTree *tree, TYPE d) {
@@ -69,11 +89,14 @@ void removeBST (struct binarySearchTree *tree, TYPE d) {
 // Pretty sure this HAS to be a typo, right?
 TYPE _leftMostChild (struct node * current) {
 	// FIXME
-	while (current->left != NULL) {
-		current = current->left;
+	assert (current != NULL);
+
+	struct node * iter = current;
+	while (iter->left != NULL) {
+		iter = iter->left;
 	}
 
-	return current->value; 
+	return iter->value; 
 }
 
 
@@ -83,36 +106,33 @@ struct node * _removeLeftmostChild (struct node *current) {
 	_nodeRemoveBST(current, current->value);
 }
 
-
+/*
+ recursive helper function to remove the left most child of a node
+ HINT: this function returns cur if its left child is NOT NULL. Otherwise,
+ it returns the right child of cur and free cur. */
 void _nodeRemoveBST (struct node * current, TYPE d) {
-	// FIXME
-	// if start.value is the value we seek
-	if (current->value == d) {
-		// 	decrease the value of dataSize
-		current->size--;
-		// if right child is null
-		if (current->right == null) {
-			// 	return left child
-			return current->left;
+	/*write this*/
+	assert(cur != NULL);
+	assert(val != NULL);
+
+	// if value == current.value, then handle case where right is null and where right is not null
+	if (compare(val, cur->val) == 0) {
+		if (cur->right == NULL) {
+			return cur->left;
 		}
-		// otherwise
 		else {
-			// 	replace value of node with leftmost child of right child
-			current = _leftMostChild(current->right);
-			// 	set right child to be removeLeftmost(right child)
-			
+			cur->val = _leftMost(cur->right);
+			cur->right = _removeLeftMost(cur->right);
 		}
 	}
-	// otherwise if testValue is smaller than start.value
-	else if(d < current->value) {
-		// 	set left child to remove (left child, testValue)
-		current->left = _nodeRemoveBST(current->left, d);
+	// else if value is less, then we will search left subtree
+	else if (compare(val, cur->val) < 0) {
+		cur->left = _removeNode(cur->left, val);
 	}
-	// otherwise
+	// else we will search right subtree
 	else {
-		// set right child to remove (right child, testValue)
-		current->right = _nodeRemoveBST(current->right, d);
+		cur->right = _removeNode(cur->right, val);
 	}
 
-	return current;
+	return cur;
 }

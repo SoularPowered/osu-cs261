@@ -53,27 +53,37 @@ int _binarySearch(TYPE *data, int size, TYPE testValue);
 and available to the end user , so they will be declared in the .h file */
 
 int dyArrayBinarySearch (struct dyArray * dy, TYPE testValue) {
-
+	return _binarySearch (dy->data, dy->size, testValue); 
 }
 
 void orderedArrayAdd (struct dyArray *dy, TYPE newElement) {
+	int index = _binarySearch(dy->data, dy->size, newElement);
+	dyArrayAddAt (dy, index, newElement); /* takes care of resize if necessary*/
 }
 
 
 /* you must complete the following */
 int orderedArrayContains (struct dyArray *dy, TYPE testElement) {
-	int result = _binarySearch(dy->data, dy->size, testElement);
+	int index = _binarySearch(dy->data, dy->size, testElement);
 
-	if (result >= 0 && result < dy->size) {
-		return 1;
-	} else return 0;
+	// Always validate that the index is valid BEFORE accessing related value!
+	if(index < dy->size) {
+		if (dy->data[index] == testElement)
+			return 1; // true - found
+	}
+	else
+		return 0; // false
 }
 
 
 void orderedArrayRemove (struct dyArray *dy, TYPE testElement) {
-	int result = _binarySearch(dy->data, dy->size, testElement);
-
-	if (result >= 0 && result < dy->size) {
-		_dynArrRemoveAt(dy, result);
-	} else return 0;	
+	int index = _binarySearch(dy->data, dy->size, testElement);
+	if (index < dy->size) {
+		if (dy->data[index] == testElement) {
+			// element exists, remove it by shifting things down
+			removeAtDynArr(dy, index);
+		}
+	}
+	else
+		return; // do nada
 }
