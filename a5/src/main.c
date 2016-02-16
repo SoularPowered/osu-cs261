@@ -1,3 +1,11 @@
+/*
+Author: Shawn S Hillyer
+Date: 02/15/2016
+Class: CS 261-400
+Assignment: Assignment 5  Heap Implementation of a To-Do List
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
