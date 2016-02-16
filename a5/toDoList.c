@@ -29,19 +29,8 @@
 int compare(TYPE left, TYPE right)
 {
     /*FIXME: write this*/
-  TaskP data1;
-  TaskP data2;
-  data1 = (TaskP) left;
-  data2 = (TaskP) right;
 
-  if (data1->priority < data2->priority) {
-    return -1;
-  }
-  else if (data1->priority > data2->priority) {
-    return 1;
-  }
-  else
-    return 0;
+
 }
 
 /***************************************************************
@@ -70,10 +59,6 @@ void print_type(TYPE val)
 TaskP createTask (int priority, char *desc)
 {
   /*FIXME: Write this */
-  TaskP newTask = (TaskP) malloc(sizeof(struct Task));
-  newTask->priority = priority;
-  strcpy(newTask->description, desc);
-  return newTask;
 }
 
 /*  Save the list to a file
@@ -93,13 +78,13 @@ TaskP createTask (int priority, char *desc)
 void saveList(DynArr *heap, FILE *filePtr)
 {
   int i;
-  TaskP task;
-  assert(sizeDynArr(heap) > 0);
-  for(i = 0; i < sizeDynArr(heap); i++)
-  {
-    task = getDynArr(heap, i);
-    fprintf(filePtr, "%d\t%s\n", task->priority, task->description);
-  }
+	TaskP task;
+	assert(sizeDynArr(heap) > 0);
+	for(i = 0; i < sizeDynArr(heap); i++)
+	{
+	  task = getDynArr(heap, i);
+	  fprintf(filePtr, "%d\t%s\n", task->priority, task->description);
+	}
 }
 
 /*  Load the list from a file
@@ -149,7 +134,6 @@ void printList(DynArr *heap)
    * so that tasks can be printed out and removed.
    */
   copyDynArr(heap, temp);
-  
   while(sizeDynArr(temp) > 0)
     {
       /* get the task */

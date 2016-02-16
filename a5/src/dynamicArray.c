@@ -526,7 +526,7 @@ int _smallerIndexHeap(DynArr *heap, int i, int j, comparator compare)
 	assert(i < heap->size);
 	assert(j < heap->size);
 
-	if(compare(heap->data[i], heap->data[j]) <= 0) {
+	if((*compare)(heap->data[i], heap->data[j]) < 0) {
 		return i;
 	}
 	else return j;
@@ -573,8 +573,8 @@ void addHeap(DynArr *heap, TYPE val, comparator  compare)
 	int parent = (newValueIndex - 1) / 2;  // new val's parent; recalculated during do-while loop
 
 	// percolate the new value until its parent is smaller than it OR 
-	while ((_smallerIndexHeap(heap, val, parent, compare) != parent) && (parent >= 0)) {
-		swapDynArr(heap, parent, val);
+	while ((_smallerIndexHeap(heap, newValueIndex, parent, compare) != parent) && (parent >= 0)) {
+		swapDynArr(heap, parent, newValueIndex);
 		newValueIndex = parent;
 		parent = (newValueIndex - 1) / 2;
 	}
@@ -599,21 +599,21 @@ void _adjustHeap(DynArr *heap, int max, int pos, comparator compare)
 	int leftChild = 2 * pos + 1;  // INDEX of the left child
 	int rightChild = 2 * pos + 2; // INDEX of the right child
 
-	/* we have two children */
-	if (rightChild < max) {   // if the index of the right child is less than max
-		//get index of smallest child
+	
+	if (rightChild < max) {   
+		/* we have two children */
 		int smallestChild = _smallerIndexHeap(heap, rightChild, leftChild, compare);
 		// if value at pos > value of smallest child
-		if (compare(heap->data[pos], heap->data[smallestChild]) > 0) {
+		if ((*compare)(heap->data[pos], heap->data[smallestChild]) > 0) {
 			// swap with smallest child, call adjustHeap (max, index of smallest child)
 			swapDynArr(heap, pos, smallestChild);
 			_adjustHeap(heap, max, smallestChild, compare);
 		}
+	}
 	
-	/* we have one child */
 	else if (leftChild < max) { 
-		// if value at pos > value of child
-		if(compare(heap->data[pos], heap->data[leftChild] > 0)) {
+		/* we have one child */
+		if((*compare)(heap->data[pos], heap->data[leftChild]) > 0) {
 			// swap with smallest child, call adjustHeap (max, index of left child)
 			swapDynArr(heap, pos, leftChild);
 			_adjustHeap(heap, max, leftChild, compare);	
@@ -635,11 +635,11 @@ void removeMinHeap(DynArr *heap, comparator compare)
 
 	int last = heap->size-1;
 	// TODO I'm not sure this next line is right - it's from the worksheet pre-completed content though
-	assert(last != 0); // make sure we have at least one element
+	assert(last >= 0); // make sure we have at least one element
 
 	// Copy the last element to the first position
 	heap->data[0] = heap->data[last];
-	removeAtDynArr(heap, last);
+	removeAtDynArr(heap, last); // remove last element (This also updates size!!)
 	_adjustHeap(heap, last, 0, compare);
 }
 
