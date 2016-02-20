@@ -43,6 +43,22 @@ int main (int argc, const char * argv[]) {
 	
     /*... concordance code goes here ...*/
 		
+	// Open File
+	FILE *inputFile = fopen(filename, "r");
+
+	// Build the concordance
+	char* nextWord = getWord(inputFile);
+
+	do {
+		nextWord = getWord(inputFile);
+		
+	} while (nextWord != NULL);
+
+
+	// Close File
+	fclose(inputFile);
+
+
 	/*... concordance code ends here ...*/
 
 	printMap(hashTable);
