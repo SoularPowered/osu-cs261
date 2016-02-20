@@ -46,10 +46,9 @@ void dyArrayDictionaryRemoveKey (struct dyArray * da, KEYTYPE key);
 # include "dyArrayDictionary.h"
 # include "dyArrayDictionary.c"
 
-// WRITEME:   ALSO NOTE, stupid
- book has the wrong return type, I FIXED IT (it had "void")
+// WRITEME: 
 /*finds and places the value associated with key in valptr */
-VALUETYPE dyArrayDictionaryGet (struct dynArr *da, KEYTYPE key, VALUETYPE *valptr) {
+void dyArrayDictionaryGet (struct dynArr *da, KEYTYPE key, VALUETYPE *valptr) {
 	int i;
 	for (i = 0; i < da->size; i++) {
 		if (EqKey(da->data[i]->key, key)) {
@@ -57,6 +56,7 @@ VALUETYPE dyArrayDictionaryGet (struct dynArr *da, KEYTYPE key, VALUETYPE *valpt
 			return;
 		}
 	}
+	// If not found, just returns and valptr will still point to (presumably!) null
 }
 
 

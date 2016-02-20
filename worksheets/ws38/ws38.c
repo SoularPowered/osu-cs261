@@ -23,13 +23,12 @@ void initHashTable (struct hashTable * ht, int size) {
 	ht->table = (struct hlink *) malloc(size * sizeof(struct hlink *));
 	assert(ht->table != NULL);
 
-	// Make all nodes point to null
+	// Make all nodes point to null and set tablesize and count
 	for (i = 0; i < size; i++) {
 		ht->table[i] = NULL;
 	}
 	ht->tablesize = size;
 	ht->count = 0;
-
 }
 
 // PROVIDED
@@ -114,12 +113,15 @@ void hashTableRemove (struct hashTable * ht, TYPE testElement) {
 
 
 // WRITE THIS
+// Important note: we definitely have to re-hash everything otherwise our calculated indices
+// would all be wrong. so it takes some time to rehash but it's necessary
 void resizeTable (struct hashTable *ht) {
+	// Function earlier uses a different name, watch out when moving this into Program 6
 	int i = 0;
 
 	struct hastTable* newHt = (struct hashTable *) malloc(sizeof(struct hashTable));
 	assert(newHt != NULL);
-	initHashTable(newHt, ht->tablesize * 2));
+	initHashTable(newHt, ht->tablesize * 2)); // Double our hash table size
 
 	// iterate over every value of ht, read the value, and use it to rehash into the new hash table
 	struct hLink * iter = ht->table[i];

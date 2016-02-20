@@ -44,7 +44,7 @@ void openHashTableAdd (struct openHashTable * ht, TYPE *newValue) {
 	negative result from HASH */
 	if (idx < 0) 
 		idx += ht->tablesize;
-	// Included with WS up to this point
+//WRITEME: The agove was Pre-written, here's the rest:
 
 	// Check the idx to see if it points to null; if not, move forward and try again
 	while (ht->table[idx] != NULL) {
@@ -82,8 +82,8 @@ void _resizeOpenHashTable (struct openHashTable *ht) {
 	int i;
 	int newSize = ht->tableSize * 2;
 	TYPE** newTable = (TYPE *) malloc(newSize * sizeof(TYPE *));
-	TYPE** tempTable = (TYPE *) malloc(newSize * sizeof(TYPE *));
 	assert(newTable != 0);
+	TYPE** tempTable = (TYPE *) malloc(newSize * sizeof(TYPE *));
 	assert(tempTable != 0);
 
 	// copy to a temp array
