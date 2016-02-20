@@ -61,7 +61,7 @@ void _freeMap (struct hashMap * ht)
 	int i;
 	struct hashLink * garbageLink = NULL, * nextLink = NULL;
 
-	for (i = 0; i < ht->tableSize; i++) {
+	for (i = 0; i < capacity(ht); i++) {
 		nextLink = ht->table[i];
 		while (nextLink != NULL) {
 			garbageLink = nextLink;
@@ -175,7 +175,19 @@ int size (struct hashMap *ht)
 {  
 	/*write this*/
 	assert(ht != NULL);
-	return 0;
+
+	int hashLinks = 0; // accumulator
+	
+	// Count the number of hashLinks that are not null
+	int i;
+	for (i = 0; i < capacity(ht); i++) {
+		struct hashLink * iter = ht->table[i];
+		while (iter != NULL) {
+			hashLinks++;
+			iter = iter->next;
+		}
+	}
+	return hashLinks;
 	
 }
 
@@ -198,7 +210,15 @@ int emptyBuckets(struct hashMap *ht)
 {  
 	/*write this*/
 	assert(ht != NULL);
-	return 0;
+	
+	int numEmpty = 0;
+	int i;
+
+	for (i = 0; i < capacity(ht); i++) {
+		if (ht->table[i] == NULL)
+			numEmpty++;
+	}
+	return numEmpty;
 }
 
 /*
@@ -213,22 +233,15 @@ float tableLoad(struct hashMap *ht)
 	/*write this*/
 	assert(ht != NULL);
 
-	int numBuckets = capacity(ht);
+	int numBuckets = size(ht);
 	int hashLinks = 0; // accumulator
 	
-	// Count the number of hashLinks that are not null
-	int i;
-	for (i = 0; i < numBuckets; i++) {
-		struct hashLink * iter = ht->table[i];
-		while (iter != NULL) {
-			hashLinks++;
-			iter = iter->next;
-		}
-	}
 	double loadFactor = (double)hashLinks / (double)numBuckets; 
 
 	return loadFactor;
 }
+
+
 void printMap (struct hashMap * ht)
 {
 	int i;
