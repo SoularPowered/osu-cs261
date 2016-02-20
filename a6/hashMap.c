@@ -125,6 +125,28 @@ void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 ValueType* atMap (struct hashMap * ht, KeyType k)
 { 
 	/*write this*/
+	assert(ht != NULL);
+	
+	// Conditionally hash the key
+	int hashIndex;
+	if (HASHING_FUNCTION == 1)
+		hashIndex = stringHash1(k) % ht->tableSize;
+	else if (HASHING_FUNCTION == 2)
+		hashIndex = stringHash2(k) % ht->tableSize;
+
+	if (hashIndex < 0) {
+		hashIndex += ht->tableSize; // get the absolute value
+	}
+
+	// Make an hashLink iterator and check every node in the list at table[hashIndex] until found or null
+	struct hashLink * iter = ht->table[hashIndex];
+
+	while (iter != NULL) {
+		if (iter->key == k) 
+			return (void*)iter->value;
+		iter = iter->next;
+	}
+
 	return NULL;
 }
 
@@ -135,19 +157,22 @@ ValueType* atMap (struct hashMap * ht, KeyType k)
 int containsKey (struct hashMap * ht, KeyType k)
 {  
 	/*write this*/
-	int hashIndex;
+	assert(ht != NULL);
+	int i;
+
 	// Conditionally hash the key
+	int hashIndex;
 	if (HASHING_FUNCTION == 1)
 		hashIndex = stringHash1(k) % ht->tableSize;
 	else if (HASHING_FUNCTION == 2)
 		hashIndex = stringHash2(k) % ht->tableSize;
-
 	if (hashIndex < 0) {
 		hashIndex += ht->tableSize; // get the absolute value
 	}
 
-	// Make an hashLink iterator and check every node in the list at hashIndex
+	// Make an hashLink iterator and check every node in the list at table[hashIndex] until found or null
 	struct hashLink * iter = ht->table[hashIndex];
+
 	while (iter != NULL) {
 		if (iter->key == k) 
 			return 1;
@@ -171,14 +196,14 @@ void removeKey (struct hashMap * ht, KeyType k)
 /*
  returns the number of hashLinks in the table
  */
-int size (struct hashMap *ht)
+int size(struct hashMap *ht)
 {  
 	/*write this*/
 	assert(ht != NULL);
 
 	int hashLinks = 0; // accumulator
 	
-	// Count the number of hashLinks that are not null
+	// Count the number of hashLinks that are not null in every bucket's list
 	int i;
 	for (i = 0; i < capacity(ht); i++) {
 		struct hashLink * iter = ht->table[i];
@@ -188,7 +213,6 @@ int size (struct hashMap *ht)
 		}
 	}
 	return hashLinks;
-	
 }
 
 /*
@@ -233,8 +257,8 @@ float tableLoad(struct hashMap *ht)
 	/*write this*/
 	assert(ht != NULL);
 
-	int numBuckets = size(ht);
-	int hashLinks = 0; // accumulator
+	int numBuckets = capacity(ht);
+	int hashLinks = size(ht); // accumulator
 	
 	double loadFactor = (double)hashLinks / (double)numBuckets; 
 
