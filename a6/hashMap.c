@@ -95,6 +95,27 @@ void _setTableSize(struct hashMap * ht, int newTableSize)
 	/*write this*/
 	assert(ht != NULL);
 
+	int i;
+	struct hashLink * nextLink = NULL;
+
+	// Make a new hashMap of the new size
+	struct hashMap *newTable = createMap(newTableSize);
+	assert(newTable != NULL);
+
+	// Iterate over all buckets and rehash everything into the newTable
+	for (i = 0; i < capacity(ht); i++) {
+		nextLink = ht->table[i];
+		while (nextLink != NULL) {
+			// If current bucket is not empty, grab the values and go to the next link
+			insertMap(newTable, nextLink->key, nextLink->value);
+			nextLink = nextLink->next;
+		}
+	}
+
+
+	// free the original ht allocations and then point it to the new one
+	deleteMap(ht);
+	ht = newTable;
 }
 
 /*
@@ -112,6 +133,37 @@ void _setTableSize(struct hashMap * ht, int newTableSize)
 void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 {  
 	/*write this*/	
+	assert(ht != NULL);
+	
+	// Conditionally hash the key
+	int hashIndex;
+	if (HASHING_FUNCTION == 1)
+		hashIndex = stringHash1(k) % ht->tableSize;
+	else if (HASHING_FUNCTION == 2)
+		hashIndex = stringHash2(k) % ht->tableSize;
+	if (hashIndex < 0)
+		hashIndex += ht->tableSize; // get the absolute value
+		
+	// If ht does NOT contain the key, k, then build a hashLink and add it
+	if (containsKey(ht, k) == 0) {
+		struct hashLink * newLink = (struct hashLink *)malloc(sizeof(struct hashLink));
+		newLink->key = k;
+		newLink->value = v;
+		newLink->next = ht->table[hashIndex];
+
+		// Update table to point to the new link and increment count
+		ht->table[hashIndex] = newLink;
+		ht->count++;
+	}
+	else {
+		// else link already exists -- replace hashLink->value with the new value
+		struct hashLink * iter = ht->table[hashIndex];
+		while (iter->next != NULL) {
+			iter = iter->next;
+		}
+		free((void*)iter->value);
+		iter->value = v;
+	}
 }
 
 /*
@@ -133,7 +185,6 @@ ValueType* atMap (struct hashMap * ht, KeyType k)
 		hashIndex = stringHash1(k) % ht->tableSize;
 	else if (HASHING_FUNCTION == 2)
 		hashIndex = stringHash2(k) % ht->tableSize;
-
 	if (hashIndex < 0) {
 		hashIndex += ht->tableSize; // get the absolute value
 	}
@@ -158,7 +209,6 @@ int containsKey (struct hashMap * ht, KeyType k)
 {  
 	/*write this*/
 	assert(ht != NULL);
-	int i;
 
 	// Conditionally hash the key
 	int hashIndex;
@@ -201,18 +251,7 @@ int size(struct hashMap *ht)
 	/*write this*/
 	assert(ht != NULL);
 
-	int hashLinks = 0; // accumulator
-	
-	// Count the number of hashLinks that are not null in every bucket's list
-	int i;
-	for (i = 0; i < capacity(ht); i++) {
-		struct hashLink * iter = ht->table[i];
-		while (iter != NULL) {
-			hashLinks++;
-			iter = iter->next;
-		}
-	}
-	return hashLinks;
+	return ht->count;
 }
 
 /*
@@ -222,7 +261,6 @@ int capacity(struct hashMap *ht)
 {  
 	/*write this*/
 	assert(ht != NULL);
-
 	return ht->tableSize;
 }
 
@@ -256,13 +294,12 @@ float tableLoad(struct hashMap *ht)
 {  
 	/*write this*/
 	assert(ht != NULL);
-
 	int numBuckets = capacity(ht);
-	int hashLinks = size(ht); // accumulator
-	
+	int hashLinks = size(ht);
 	double loadFactor = (double)hashLinks / (double)numBuckets; 
-
-	return loadFactor;
+	return loadFactor; 
+	// could have written entire function as:
+	// return( (double)size(ht) / (double)capacity(ht) );
 }
 
 
