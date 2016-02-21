@@ -1,0 +1,147 @@
+Written Questions
+Your  written  questions  will  be  handed  in  electronically,  preferably  as  comments  on the  TEACH  turn-­in  page,  just  cut  and  paste  from  your  preferred  editor.
+
+
+==============================================================================================================================================
+1. Give  an  example  of  two  words  that  would  hash  to  the  same  value  using stringHash1()   but  would  not  using   stringHash2() .
+==============================================================================================================================================
+stringHash2("flog") => hashes to 3
+stringHash2("golf") => hashes to 7
+
+But using stringHash1, ANY permutation of the letters GOLF will hash to the same value.
+
+==============================================================================================================================================
+2. Why  does  the  above  make   stringHash2()   superior  to   stringHash1() ?
+==============================================================================================================================================
+Only words with the same set of characters that are spelled the same forwards and backwards will hash to the same value necessarily with stringHash2. Permutations will be less likely to collid and create a better load balance, which in term will result in faster performance. 
+
+For example, using stringHash1, all four of the words flog, golf, glof, and folg hashed to bucket index 4, leaving 9 empty buckets out of 10. Clearly this is not as good as a hash that won't have this same problem.
+
+==============================================================================================================================================
+3. When  you  run  your  program  on  the  same  input  file  but  one  run  using stringHash1()   and  on  the  other  run  using   
+stringHash2() .  Is  it  possible for  your   size()   function  to  return  different  values?
+==============================================================================================================================================
+
+Size returns the number of hashLinks in the map. So they should always be the same, no matter the hashing function, because each key can be in the hashMap only once. Using the same input, that means that every additional occurence of the same key will basically be ignored or update the value to the new argument.
+
+==============================================================================================================================================
+4. When  you  run  your  program  on  the  same  input  file  using   stringHash1() on  one  run  and  using   stringHash2()   on  another,  
+is  it  possible  for  your tableLoad()   function  to  return  different  values?
+==============================================================================================================================================
+
+Absolutely not. Because the load is dependent on the total hashLinks - which we know will not very - divided by the total number of buckets, we shouldn't see any input changing the loads differently. And because the number of buckets is only updated when the load reaches a certain level, we'd expect - and indeed, testing shows that - the load stays the same for any identical input for each of the hasing functions.
+
+
+==============================================================================================================================================
+5. When  you  run  your  program  on  the  same  input  file  with  one  run  using stringHash1()   and  the  other  run  using   
+stringHash2() ,  is  it  possible  for your   emptyBuckets()   function  to  return  different  values?
+==============================================================================================================================================
+
+emptyBuckets() can definitely vary, depending on how many collisions there are.
+
+==============================================================================================================================================
+6. Is  there  any  difference  in  the  number  of  'empty  buckets'  when  you  change the  table  size  from  an  even  number,  like  1000 
+to  a  prime  like  997  ?
+==============================================================================================================================================
+
+I used a modified input2.txt (copy-pasted about 4 times to duplicate it) and used hashTable default size of 1000. This resulted in:
+
+concordance ran in 0.002518 seconds
+Table emptyBuckets = 1391
+Table count = 908
+Table capacity = 2000
+Table load = 0.454000
+
+
+
+The same test using 997 table size to start resulted in more buckets left empty.
+
+concordance ran in 0.002490 seconds
+Table emptyBuckets = 1406
+Table count = 908
+Table capacity = 1994
+Table load = 0.455366
+
+
+For this test on input1.txt I got:
+
+[input1.txt] with 1000 capacity
+concordance ran in 0.000134 seconds
+Table emptyBuckets = 936
+Table count = 68
+Table capacity = 1000
+Table load = 0.068000
+
+[input1.txt] with 997 capacity
+concordance ran in 0.000126 seconds
+Table emptyBuckets = 934
+Table count = 68
+Table capacity = 997
+Table load = 0.068205
+
+
+
+In summary, there are definitely some differences, but they don't seem huge (at least with these two similar capacity sizes).
+
+==============================================================================================================================================
+7. Using  the  timing  code  provided  to  you.  Run  you  code  on  different  size  hash tables.  How  does  affecting  the  hash  table  
+size  change  your  performance?
+=============================================================================================================================
+
+I returned input2.txt to its original size and run these tests:
+
+***Initial Size: 2
+concordance ran in 0.001296 seconds
+Table emptyBuckets = 1430
+Table count = 908
+Table capacity = 2048
+Table load = 0.443359
+
+
+***Initial Size: 11
+concordance ran in 0.002372 seconds
+Table emptyBuckets = 848
+Table count = 908
+Table capacity = 1408
+Table load = 0.644886
+
+
+
+***Initial Size: 59
+concordance ran in 0.001303 seconds
+Table emptyBuckets = 1307
+Table count = 908
+Table capacity = 1888
+Table load = 0.480932
+
+
+
+***Initial Size: 257
+concordance ran in 0.001303 seconds
+Table emptyBuckets = 1434
+Table count = 908
+Table capacity = 2056
+Table load = 0.441634
+
+
+
+***Initial Size: 811
+concordance ran in 0.001193 seconds
+Table emptyBuckets = 1056
+Table count = 908
+Table capacity = 1622
+Table load = 0.559803
+
+
+
+
+***Initial Size: 1301
+concordance ran in 0.001119 seconds
+Table emptyBuckets = 746
+Table count = 908
+Table capacity = 1301
+Table load = 0.697925
+
+
+
+Honestly, changing the size has an nearly indiscernible difference on performance on a sufficiently large file. I ran similar tests using a file 420 copy-pastes of original and it was still quite small.

@@ -86,7 +86,7 @@ int main (int argc, const char * argv[]) {
 
 	/*... concordance code ends here ...*/
 
-	printMap(hashTable);
+	// printMap(hashTable);
 	timer = clock() - timer;
 	printf("\nconcordance ran in %f seconds\n", (float)timer / (float)CLOCKS_PER_SEC);
 	printf("Table emptyBuckets = %d\n", emptyBuckets(hashTable));
@@ -99,7 +99,7 @@ int main (int argc, const char * argv[]) {
 	removeKey(hashTable, "and");
 	removeKey(hashTable, "me");
 	removeKey(hashTable, "the");
-	printMap(hashTable);
+	// printMap(hashTable);
 		
 	deleteMap(hashTable);
 	printf("\nDeleted the table\n");   
