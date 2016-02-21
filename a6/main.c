@@ -52,13 +52,9 @@ int main (int argc, const char * argv[]) {
 		// If the hash table contains the word
 		if (containsKey(hashTable, nextWord) == 1) {
 			int* count = atMap(hashTable, nextWord);
-			// printf("%d", &count);
-			// printf("Key %s found. Count WAS: %d\n", nextWord, &count);
-			(*count)++;
-			//insertMap(hashTable, nextWord, *count);
+			(*count)++; // since atMap returns a reference, we can just 'reach in' and update it
 		}
 		else {
-			printf("Hi?\n");
 			insertMap(hashTable, nextWord, 1);
 		}
 		nextWord = getWord(fileptr);

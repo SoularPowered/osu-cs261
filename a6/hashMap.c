@@ -10,26 +10,20 @@
 /*the first hashing function you can use*/
 int stringHash1(char * str)
 {
-	// printf("\nInside stringHash1\n");
-	// printf("Argument str = %s\t", str);
 	int i;
 	int r = 0;
 	for (i = 0; str[i] != '\0'; i++)
 		r += str[i];
-	// printf("Hash Key%d\n", r);
 	return r;
 }
 
 /*the second hashing function you can use*/
 int stringHash2(char * str)
 {
-	// printf("\nInside stringHash2\n");
-	printf("Argument str = %s\t", str);
 	int i;
 	int r = 0;
 	for (i = 0; str[i] != '\0'; i++)
 		r += (i+1) * str[i]; /*the difference between stringHash1 and stringHash2 is on this line*/
-	// printf("Hash Key: %d\n", r);
 	return r;
 }
 
@@ -65,32 +59,37 @@ void _freeMap (struct hashMap * ht)
 	/*write this*/
 	assert(ht != NULL);
 	int i;
-	struct hashLink * garbageLink = NULL, * nextLink = NULL;
+	struct hashLink * current = NULL, * next = NULL;
 
-	// for (i = 0; i < capacity(ht); i++) {
-	// 	nextLink = ht->table[i];
-	// 	while (nextLink != NULL) {
-	// 		garbageLink = nextLink;
-	// 		nextLink = nextLink->next;
+	for (i = 0; i < capacity(ht); i++) {
+		current = ht->table[i];
+		while (current != NULL) {
+			next = current->next; // handle to move forward after deleting current
 
-	// 		// Free the hashLink's key and value memory and then the link itself
-	// 		free(garbageLink->key);
-	// 		garbageLink->key = NULL;
-	// 		// TODO: the ValueType def ins hashMap.h defines value as type int, cannot call free!!!!
-	// 		free((void *)garbageLink->value);
-	// 		// garbageLink->value = NULL;
-	// 		free(garbageLink);
-	// 	}
-	// }		
+			// Free the hashLink's key and the hashLink itself
+			if (current->key != NULL)
+				free(current->key);
+			current->key = NULL;
+			// NOTE: the ValueType def ins hashMap.h defines value as type int, cannot call free!!!!
+			// free((void *)current->value); // This line ALWAYS causes a segfault :(
+			if (current != NULL)
+				free(current);
+			current = next;
+		}
+	}		
 }
 
 /* Deallocate buckets and the hash map.*/
 void deleteMap(hashMap *ht) {
+	printf("Check 1\n");
 	assert(ht!= 0);
+	printf("Check 2\n");
 	/* Free all memory used by the buckets */
 	_freeMap(ht);
+	printf("Check 3\n");
 	/* free the hashMap struct */
 	free(ht);
+	printf("Check 4\n");
 }
 
 /* 
@@ -102,26 +101,25 @@ void _setTableSize(struct hashMap * ht, int newTableSize)
 	assert(ht != NULL);
 
 	int i;
-	struct hashLink * nextLink = NULL;
+	struct hashLink * current = NULL;
 
-	// Make a new hashMap of the new size
-	struct hashMap *newTable = createMap(newTableSize);
-	assert(newTable != NULL);
+	// // Make a new hashMap of the new size
+	struct hashMap *tempHashMap = createMap(newTableSize);
+	assert(tempHashMap != NULL);
 
 	// Iterate over all buckets and rehash everything into the newTable
 	for (i = 0; i < capacity(ht); i++) {
-		nextLink = ht->table[i];
-		while (nextLink != NULL) {
-			// If current bucket is not empty, grab the values and go to the next link
-			insertMap(newTable, nextLink->key, nextLink->value);
-			nextLink = nextLink->next;
+		current = ht->table[i];
+		while (current != NULL) {
+			insertMap(tempHashMap, current->key, current->value);
+			current = current->next;
 		}
 	}
 
-
-	// free the original ht allocations and then point it to the new one
-	deleteMap(ht);
-	ht = newTable;
+	// copy all of the tempHashMap values into the original and free the temp
+	ht->table = tempHashMap->table;
+	ht->tableSize = tempHashMap->tableSize;
+	// deleteMap(tempHashMap);  // oddly causing a segfault?
 }
 
 /*
@@ -142,9 +140,9 @@ void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 	assert(ht != NULL);
 	
 	// TODO: RESIZE IF NEEDED!
-	// if (loadFactor(ht) >= LOAD_FACTOR_THRESHOLD) {
-	// 	_setTableSize(ht, capacity(ht)*2);
-	// }
+	if (tableLoad(ht) >= LOAD_FACTOR_THRESHOLD) {
+		_setTableSize(ht, capacity(ht)*2);
+	}
 
 	// Conditionally hash the key
 	int hashIndex;
@@ -154,7 +152,7 @@ void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 		hashIndex = stringHash2(k) % capacity(ht);
 	if (hashIndex < 0)
 		hashIndex += ht->tableSize; // get the absolute value
-	printf("Hash index is: %d\n", hashIndex);	// TODO Delete debug print statement
+	
 
 	struct hashLink* current = ht->table[hashIndex];
 
@@ -174,8 +172,8 @@ void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 	else {
 		while (current != NULL) {
 			if (strcmp(current->key, k) == 0) {
-				printf("Duplicate found for %s, we've been passed in %d", k, v);
-				// free((void*)current->value);
+				// printf("Duplicate found for %s, we've been passed in %d", k, v);
+				// free((void*)current->value); // tried it -- causes crashing
 				current->value = v;
 				return;
 			} 
@@ -326,9 +324,7 @@ void removeKey (struct hashMap * ht, KeyType k)
  */
 int size(struct hashMap *ht)
 {  
-	/*write this*/
 	assert(ht != NULL);
-
 	return ht->count;
 }
 
@@ -337,7 +333,6 @@ int size(struct hashMap *ht)
  */
 int capacity(struct hashMap *ht)
 {  
-	/*write this*/
 	assert(ht != NULL);
 	return ht->tableSize;
 }
@@ -348,9 +343,7 @@ int capacity(struct hashMap *ht)
  */
 int emptyBuckets(struct hashMap *ht)
 {  
-	/*write this*/
 	assert(ht != NULL);
-	
 	int numEmpty = 0;
 	int i;
 
@@ -370,15 +363,8 @@ int emptyBuckets(struct hashMap *ht)
  */
 float tableLoad(struct hashMap *ht)
 {  
-	/*write this*/
 	assert(ht != NULL);
 	return( (double)size(ht) / (double)capacity(ht) );
-	
-	// could have written entire function as:
-		// int numBuckets = capacity(ht);
-		// int hashLinks = size(ht);
-		// double loadFactor = (double)hashLinks / (double)numBuckets; 
-		// return loadFactor; 
 }
 
 
