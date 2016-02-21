@@ -44,19 +44,29 @@ int main (int argc, const char * argv[]) {
     /*... concordance code goes here ...*/
 		
 	// Open File
-	FILE *inputFile = fopen(filename, "r");
+	fileptr = fopen(filename, "r");
 
 	// Build the concordance
-	char* nextWord = getWord(inputFile);
-
-	do {
-		nextWord = getWord(inputFile);
-		
-	} while (nextWord != NULL);
+	char* nextWord = getWord(fileptr);
+	while (nextWord != NULL) {
+		// If the hash table contains the word
+		if (containsKey(hashTable, nextWord) == 1) {
+			int count = (int)atMap(hashTable, nextWord);
+			printf("%d", count);
+			printf("Key %s found. Count WAS: %d\n", nextWord, count);
+			count++;
+			insertMap(hashTable, nextWord, count);
+		}
+		else {
+			printf("Hi?\n");
+			insertMap(hashTable, nextWord, 1);
+		}
+		nextWord = getWord(fileptr);
+	}
 
 
 	// Close File
-	fclose(inputFile);
+	fclose(fileptr);
 
 
 	/*... concordance code ends here ...*/

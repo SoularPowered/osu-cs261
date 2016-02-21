@@ -10,20 +10,26 @@
 /*the first hashing function you can use*/
 int stringHash1(char * str)
 {
+	// printf("\nInside stringHash1\n");
+	// printf("Argument str = %s\t", str);
 	int i;
 	int r = 0;
 	for (i = 0; str[i] != '\0'; i++)
 		r += str[i];
+	// printf("Hash Key%d\n", r);
 	return r;
 }
 
 /*the second hashing function you can use*/
 int stringHash2(char * str)
 {
+	// printf("\nInside stringHash2\n");
+	printf("Argument str = %s\t", str);
 	int i;
 	int r = 0;
 	for (i = 0; str[i] != '\0'; i++)
 		r += (i+1) * str[i]; /*the difference between stringHash1 and stringHash2 is on this line*/
+	// printf("Hash Key: %d\n", r);
 	return r;
 }
 
@@ -61,21 +67,21 @@ void _freeMap (struct hashMap * ht)
 	int i;
 	struct hashLink * garbageLink = NULL, * nextLink = NULL;
 
-	for (i = 0; i < capacity(ht); i++) {
-		nextLink = ht->table[i];
-		while (nextLink != NULL) {
-			garbageLink = nextLink;
-			nextLink = nextLink->next;
+	// for (i = 0; i < capacity(ht); i++) {
+	// 	nextLink = ht->table[i];
+	// 	while (nextLink != NULL) {
+	// 		garbageLink = nextLink;
+	// 		nextLink = nextLink->next;
 
-			// Free the hashLink's key and value memory and then the link itself
-			free(garbageLink->key);
-			garbageLink->key = NULL;
-			// TODO: the ValueType def ins hashMap.h defines value as type int, cannot call free!!!!
-			free((void *)garbageLink->value);
-			// garbageLink->value = NULL;
-			free(garbageLink);
-		}
-	}		
+	// 		// Free the hashLink's key and value memory and then the link itself
+	// 		free(garbageLink->key);
+	// 		garbageLink->key = NULL;
+	// 		// TODO: the ValueType def ins hashMap.h defines value as type int, cannot call free!!!!
+	// 		free((void *)garbageLink->value);
+	// 		// garbageLink->value = NULL;
+	// 		free(garbageLink);
+	// 	}
+	// }		
 }
 
 /* Deallocate buckets and the hash map.*/
@@ -135,34 +141,56 @@ void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 	/*write this*/	
 	assert(ht != NULL);
 	
+	// TODO: RESIZE IF NEEDED!
+	// if (loadFactor(ht) >= LOAD_FACTOR_THRESHOLD) {
+	// 	_setTableSize(ht, capacity(ht)*2);
+	// }
+
 	// Conditionally hash the key
 	int hashIndex;
 	if (HASHING_FUNCTION == 1)
-		hashIndex = stringHash1(k) % ht->tableSize;
-	else if (HASHING_FUNCTION == 2)
-		hashIndex = stringHash2(k) % ht->tableSize;
+		hashIndex = stringHash1(k) % capacity(ht);
+	if (HASHING_FUNCTION == 2)
+		hashIndex = stringHash2(k) % capacity(ht);
 	if (hashIndex < 0)
 		hashIndex += ht->tableSize; // get the absolute value
-		
-	// If ht does NOT contain the key, k, then build a hashLink and add it
-	if (containsKey(ht, k) == 0) {
+	printf("Hash index is: %d\n", hashIndex);	// TODO Delete debug print statement
+
+	struct hashLink* current = ht->table[hashIndex];
+
+	// If bucket is empty, then key doesn't exist yet, just add it
+	if (ht->table[hashIndex] == NULL) {
 		struct hashLink * newLink = (struct hashLink *)malloc(sizeof(struct hashLink));
 		newLink->key = k;
 		newLink->value = v;
-		newLink->next = ht->table[hashIndex];
+		newLink->next = NULL;
 
 		// Update table to point to the new link and increment count
-		ht->table[hashIndex] = newLink;
+		ht->table[hashIndex] = newLink;  // sets table[hashIndex] to the newLink
 		ht->count++;
 	}
+
+	// else bucket has at least one hashLink, check them  already exists -- replace hashLink->value with the new value
 	else {
-		// else link already exists -- replace hashLink->value with the new value
-		struct hashLink * iter = ht->table[hashIndex];
-		while (iter->next != NULL) {
-			iter = iter->next;
+		while (current != NULL) {
+			if (current->key == k) {
+				printf("Duplicate found for %s, we've been passed in %d", k, v);
+				free((void*)current->value);
+				current->value = v;
+				return;
+			} 
+			if (current->next == NULL) {
+				// We've reacched end of chain without finding value, add it to end
+				struct hashLink * newLink = (struct hashLink *)malloc(sizeof(struct hashLink));
+				newLink->key = k;
+				newLink->value = v;
+				newLink->next = NULL;
+				current->next = newLink;
+				ht->count++;
+				return;
+			}
+			current = current->next;
 		}
-		free((void*)iter->value);
-		iter->value = v;
 	}
 }
 
@@ -183,7 +211,7 @@ ValueType* atMap (struct hashMap * ht, KeyType k)
 	int hashIndex;
 	if (HASHING_FUNCTION == 1)
 		hashIndex = stringHash1(k) % ht->tableSize;
-	else if (HASHING_FUNCTION == 2)
+	if (HASHING_FUNCTION == 2)
 		hashIndex = stringHash2(k) % ht->tableSize;
 	if (hashIndex < 0) {
 		hashIndex += ht->tableSize; // get the absolute value
@@ -194,10 +222,11 @@ ValueType* atMap (struct hashMap * ht, KeyType k)
 
 	while (iter != NULL) {
 		if (iter->key == k) 
-			return (void*)iter->value;
+			return (ValueType*)iter->value;
 		iter = iter->next;
 	}
 
+	// If we reach this point then value not found, return NULL as indicated
 	return NULL;
 }
 
@@ -212,22 +241,28 @@ int containsKey (struct hashMap * ht, KeyType k)
 
 	// Conditionally hash the key
 	int hashIndex;
-	if (HASHING_FUNCTION == 1)
+	if (HASHING_FUNCTION == 1) {
 		hashIndex = stringHash1(k) % ht->tableSize;
-	else if (HASHING_FUNCTION == 2)
+	}
+	if (HASHING_FUNCTION == 2) {
 		hashIndex = stringHash2(k) % ht->tableSize;
+	}
 	if (hashIndex < 0) {
 		hashIndex += ht->tableSize; // get the absolute value
 	}
 
 	// Make an hashLink iterator and check every node in the list at table[hashIndex] until found or null
 	struct hashLink * iter = ht->table[hashIndex];
+	// printf("Checking for key %s at table[%d]...\n", k, hashIndex);
 
 	while (iter != NULL) {
-		if (iter->key == k) 
+		if (iter->key == k) {
+			// printf("Contains key %s\n", (char*)k);
 			return 1;
+		}
 		iter = iter->next;
 	}
+	// printf("Does NOT contain key %s\n", (char*)k);
 	return 0;
 }
 
@@ -241,6 +276,49 @@ void removeKey (struct hashMap * ht, KeyType k)
 {  
 	/*write this*/
 	assert(ht != NULL);	
+
+		// Conditionally hash the key
+	int hashIndex;
+	if (HASHING_FUNCTION == 1) {
+		hashIndex = stringHash1(k) % ht->tableSize;
+	}
+	if (HASHING_FUNCTION == 2) {
+		hashIndex = stringHash2(k) % ht->tableSize;
+	}
+	if (hashIndex < 0) {
+		hashIndex += ht->tableSize; // get the absolute value
+	}
+
+	struct hashLink * current;
+	struct hashLink * previous = NULL;
+	
+	current = ht->table[hashIndex];
+	if (current == NULL) {
+		// If the bucket is 'empty' then key won't be found, just exit
+		return;
+	}
+	 // If not, we have at least one node in bucket. Can safely
+	 //  Iterate over the nodes, if any, traversing until we find the key (or not!) 
+	while (current->key != k && current != NULL) {
+		// move forward
+		previous = current;
+		current = current->next;
+	}
+	
+	// if previous points to null still, then first node contained key
+	if (current->key == k && previous == NULL) {
+		ht->table[hashIndex] = current->next;
+		free(current);
+	}
+	// else if match, we must point previous->next to current->next and delete
+	else if (current->key == k) {
+		previous->next = current->next;
+		free(current);
+	}
+	else if (current == NULL) {
+		return; // node wasn't found in hashLink chain, return
+	}
+
 }
 
 /*
@@ -294,12 +372,13 @@ float tableLoad(struct hashMap *ht)
 {  
 	/*write this*/
 	assert(ht != NULL);
-	int numBuckets = capacity(ht);
-	int hashLinks = size(ht);
-	double loadFactor = (double)hashLinks / (double)numBuckets; 
-	return loadFactor; 
+	return( (double)size(ht) / (double)capacity(ht) );
+	
 	// could have written entire function as:
-	// return( (double)size(ht) / (double)capacity(ht) );
+		// int numBuckets = capacity(ht);
+		// int hashLinks = size(ht);
+		// double loadFactor = (double)hashLinks / (double)numBuckets; 
+		// return loadFactor; 
 }
 
 
