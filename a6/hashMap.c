@@ -70,8 +70,8 @@ void _freeMap (struct hashMap * ht)
 			if (current->key != NULL)
 				free(current->key);
 			current->key = NULL;
-			// NOTE: the ValueType def ins hashMap.h defines value as type int, cannot call free!!!!
-			// free((void *)current->value); // This line ALWAYS causes a segfault :(
+			// NOTE: the ValueType def ins hashMap.h defines value as type int, cannot call free without breaking program
+			// free((void *)current->value); // This line ALWAYS causes a segfault, commenting out
 			if (current != NULL)
 				free(current);
 			current = next;
@@ -81,15 +81,11 @@ void _freeMap (struct hashMap * ht)
 
 /* Deallocate buckets and the hash map.*/
 void deleteMap(hashMap *ht) {
-	printf("Check 1\n");
 	assert(ht!= 0);
-	printf("Check 2\n");
 	/* Free all memory used by the buckets */
 	_freeMap(ht);
-	printf("Check 3\n");
 	/* free the hashMap struct */
 	free(ht);
-	printf("Check 4\n");
 }
 
 /* 
@@ -101,9 +97,9 @@ void _setTableSize(struct hashMap * ht, int newTableSize)
 	assert(ht != NULL);
 
 	int i;
-	struct hashLink * current = NULL;
+	struct hashLink * current = NULL;  // iterator
 
-	// // Make a new hashMap of the new size
+	// Make a new hashMap of the new size to rehash all values into
 	struct hashMap *tempHashMap = createMap(newTableSize);
 	assert(tempHashMap != NULL);
 
@@ -119,7 +115,9 @@ void _setTableSize(struct hashMap * ht, int newTableSize)
 	// copy all of the tempHashMap values into the original and free the temp
 	ht->table = tempHashMap->table;
 	ht->tableSize = tempHashMap->tableSize;
-	// deleteMap(tempHashMap);  // oddly causing a segfault?
+	// Can't delete tempHashMap or we'll be freeing memory now referenced by table... best solution??
+	// deleteMap(tempHashMap);  
+	tempHashMap = NULL; // so at least avoid dangling it!
 }
 
 /*
@@ -172,7 +170,6 @@ void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 	else {
 		while (current != NULL) {
 			if (strcmp(current->key, k) == 0) {
-				// printf("Duplicate found for %s, we've been passed in %d", k, v);
 				// free((void*)current->value); // tried it -- causes crashing
 				current->value = v;
 				return;
@@ -251,16 +248,12 @@ int containsKey (struct hashMap * ht, KeyType k)
 
 	// Make an hashLink iterator and check every node in the list at table[hashIndex] until found or null
 	struct hashLink * current = ht->table[hashIndex];
-	// printf("Checking for key %s at table[%d]...\n", k, hashIndex);
-
-	while (current != NULL) {
+		while (current != NULL) {
 		if (strcmp(current->key, k) == 0) {
-			// printf("Contains key %s\n", (char*)k);
 			return 1;
 		}
 		current = current->next;
 	}
-	// printf("Does NOT contain key %s\n", (char*)k);
 	return 0;
 }
 
@@ -275,47 +268,48 @@ void removeKey (struct hashMap * ht, KeyType k)
 	/*write this*/
 	assert(ht != NULL);	
 
-	// 	// Conditionally hash the key
-	// int hashIndex;
-	// if (HASHING_FUNCTION == 1) {
-	// 	hashIndex = stringHash1(k) % ht->tableSize;
-	// }
-	// if (HASHING_FUNCTION == 2) {
-	// 	hashIndex = stringHash2(k) % ht->tableSize;
-	// }
-	// if (hashIndex < 0) {
-	// 	hashIndex += ht->tableSize; // get the absolute value
-	// }
+	// Conditionally hash the key
+	int hashIndex;
+	if (HASHING_FUNCTION == 1) {
+		hashIndex = stringHash1(k) % ht->tableSize;
+	}
+	if (HASHING_FUNCTION == 2) {
+		hashIndex = stringHash2(k) % ht->tableSize;
+	}
+	if (hashIndex < 0) {
+		hashIndex += ht->tableSize; // get the absolute value
+	}
 
-	// struct hashLink * current;
-	// struct hashLink * previous = NULL;
+	struct hashLink * current = ht->table[hashIndex];
+	struct hashLink * previous = NULL;
 	
-	// current = ht->table[hashIndex];
-	// if (current == NULL) {
-	// 	// If the bucket is 'empty' then key won't be found, just exit
-	// 	return;
-	// }
-	//  // If not, we have at least one node in bucket. Can safely
-	//  //  Iterate over the nodes, if any, traversing until we find the key (or not!) 
-	// while (current->key != k && current != NULL) {
-	// 	// move forward
-	// 	previous = current;
-	// 	current = current->next;
-	// }
+	// If the current is an empty bucket then key won't be found, just exit
+	if (current == NULL) {
+		return;
+	}
+	 // If not, we have at least one node in bucket. Can safely Iterate
+	 // over the links (if any), traversing until we find the key *or* end of chain (key doesn't exist)
+	while (current != NULL && (strcmp(current->key, k) != 0)) {
+		previous = current;
+		current = current->next;
+	}
 	
-	// // if previous points to null still, then first node contained key
-	// if ((strcmp(current->key, k) == 0) && previous == NULL) {
-	// 	ht->table[hashIndex] = current->next;
-	// 	free(current);
-	// }
-	// // else if match, we must point previous->next to current->next and delete
-	// else if (strcmp(current->key, k) == 0) {
-	// 	previous->next = current->next;
-	// 	free(current);
-	// }
-	// else if (current == NULL) {
-	// 	return; // node wasn't found in hashLink chain, return
-	// }
+	// if previous points to null still, then first node contained key. Free, relink, decrement
+	if ((strcmp(current->key, k) == 0) && previous == NULL) {
+		ht->table[hashIndex] = current->next;
+		free(current);
+		ht->count--;
+	}
+	// else if match, we point previous->next to current->next + Free, decrement
+	else if (strcmp(current->key, k) == 0) {
+		previous->next = current->next;
+		free(current);
+		ht->count--;
+	}
+	// node wasn't found in hashLink chain, return out (explicit for readability only)
+	else if (current == NULL) {
+		return; 
+	}
 
 }
 

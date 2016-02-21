@@ -45,24 +45,43 @@ int main (int argc, const char * argv[]) {
 		
 	// Open File
 	fileptr = fopen(filename, "r");
+	if (!fileptr) {
+		printf("Error opening file: %s\n", filename);
+		return 0;
+	}
 
-	// Build the concordance
+	// Build the concordance by iterating through file, checking getWord() return val for NULL to indicate EOF
 	char* nextWord = getWord(fileptr);
 	while (nextWord != NULL) {
-		// If the hash table contains the word
+		// Check if it contains - if so, get reference to its count and increment the value there
 		if (containsKey(hashTable, nextWord) == 1) {
 			int* count = atMap(hashTable, nextWord);
 			(*count)++; // since atMap returns a reference, we can just 'reach in' and update it
 		}
+		// Otherwise insert it with a count of 1
 		else {
 			insertMap(hashTable, nextWord, 1);
 		}
 		nextWord = getWord(fileptr);
 	}
 
+	// Print the values in the hashTable per the assignment instructions format of word: [count] \n
+	struct hashLink * current = NULL;
+	int j;
+	for (j = 0; j < capacity(hashTable); j++) {
+		current = hashTable->table[j];
+		while (current != NULL) {
+			printf("%s: %d\n", current->key, current->value);
+			current = current->next;
+		}
+	}
+
 
 	// Close File
-	fclose(fileptr);
+	if(fclose(fileptr) == 0)
+		printf("File closed succcesfully\n");
+	else
+		printf("File did not close properly.\n");
 
 
 	/*... concordance code ends here ...*/
