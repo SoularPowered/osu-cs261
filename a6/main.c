@@ -51,11 +51,11 @@ int main (int argc, const char * argv[]) {
 	while (nextWord != NULL) {
 		// If the hash table contains the word
 		if (containsKey(hashTable, nextWord) == 1) {
-			int count = (int)atMap(hashTable, nextWord);
-			printf("%d", count);
-			printf("Key %s found. Count WAS: %d\n", nextWord, count);
-			count++;
-			insertMap(hashTable, nextWord, count);
+			int* count = atMap(hashTable, nextWord);
+			// printf("%d", &count);
+			// printf("Key %s found. Count WAS: %d\n", nextWord, &count);
+			(*count)++;
+			//insertMap(hashTable, nextWord, *count);
 		}
 		else {
 			printf("Hi?\n");

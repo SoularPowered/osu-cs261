@@ -173,9 +173,9 @@ void insertMap (struct hashMap * ht, KeyType k, ValueType v)
 	// else bucket has at least one hashLink, check them  already exists -- replace hashLink->value with the new value
 	else {
 		while (current != NULL) {
-			if (current->key == k) {
+			if (strcmp(current->key, k) == 0) {
 				printf("Duplicate found for %s, we've been passed in %d", k, v);
-				free((void*)current->value);
+				// free((void*)current->value);
 				current->value = v;
 				return;
 			} 
@@ -218,12 +218,12 @@ ValueType* atMap (struct hashMap * ht, KeyType k)
 	}
 
 	// Make an hashLink iterator and check every node in the list at table[hashIndex] until found or null
-	struct hashLink * iter = ht->table[hashIndex];
+	struct hashLink * current = ht->table[hashIndex];
 
-	while (iter != NULL) {
-		if (iter->key == k) 
-			return (ValueType*)iter->value;
-		iter = iter->next;
+	while (current != NULL) {
+		if (strcmp(current->key, k) == 0)
+			return &current->value;
+		current = current->next;
 	}
 
 	// If we reach this point then value not found, return NULL as indicated
@@ -252,15 +252,15 @@ int containsKey (struct hashMap * ht, KeyType k)
 	}
 
 	// Make an hashLink iterator and check every node in the list at table[hashIndex] until found or null
-	struct hashLink * iter = ht->table[hashIndex];
+	struct hashLink * current = ht->table[hashIndex];
 	// printf("Checking for key %s at table[%d]...\n", k, hashIndex);
 
-	while (iter != NULL) {
-		if (iter->key == k) {
+	while (current != NULL) {
+		if (strcmp(current->key, k) == 0) {
 			// printf("Contains key %s\n", (char*)k);
 			return 1;
 		}
-		iter = iter->next;
+		current = current->next;
 	}
 	// printf("Does NOT contain key %s\n", (char*)k);
 	return 0;
@@ -277,47 +277,47 @@ void removeKey (struct hashMap * ht, KeyType k)
 	/*write this*/
 	assert(ht != NULL);	
 
-		// Conditionally hash the key
-	int hashIndex;
-	if (HASHING_FUNCTION == 1) {
-		hashIndex = stringHash1(k) % ht->tableSize;
-	}
-	if (HASHING_FUNCTION == 2) {
-		hashIndex = stringHash2(k) % ht->tableSize;
-	}
-	if (hashIndex < 0) {
-		hashIndex += ht->tableSize; // get the absolute value
-	}
+	// 	// Conditionally hash the key
+	// int hashIndex;
+	// if (HASHING_FUNCTION == 1) {
+	// 	hashIndex = stringHash1(k) % ht->tableSize;
+	// }
+	// if (HASHING_FUNCTION == 2) {
+	// 	hashIndex = stringHash2(k) % ht->tableSize;
+	// }
+	// if (hashIndex < 0) {
+	// 	hashIndex += ht->tableSize; // get the absolute value
+	// }
 
-	struct hashLink * current;
-	struct hashLink * previous = NULL;
+	// struct hashLink * current;
+	// struct hashLink * previous = NULL;
 	
-	current = ht->table[hashIndex];
-	if (current == NULL) {
-		// If the bucket is 'empty' then key won't be found, just exit
-		return;
-	}
-	 // If not, we have at least one node in bucket. Can safely
-	 //  Iterate over the nodes, if any, traversing until we find the key (or not!) 
-	while (current->key != k && current != NULL) {
-		// move forward
-		previous = current;
-		current = current->next;
-	}
+	// current = ht->table[hashIndex];
+	// if (current == NULL) {
+	// 	// If the bucket is 'empty' then key won't be found, just exit
+	// 	return;
+	// }
+	//  // If not, we have at least one node in bucket. Can safely
+	//  //  Iterate over the nodes, if any, traversing until we find the key (or not!) 
+	// while (current->key != k && current != NULL) {
+	// 	// move forward
+	// 	previous = current;
+	// 	current = current->next;
+	// }
 	
-	// if previous points to null still, then first node contained key
-	if (current->key == k && previous == NULL) {
-		ht->table[hashIndex] = current->next;
-		free(current);
-	}
-	// else if match, we must point previous->next to current->next and delete
-	else if (current->key == k) {
-		previous->next = current->next;
-		free(current);
-	}
-	else if (current == NULL) {
-		return; // node wasn't found in hashLink chain, return
-	}
+	// // if previous points to null still, then first node contained key
+	// if ((strcmp(current->key, k) == 0) && previous == NULL) {
+	// 	ht->table[hashIndex] = current->next;
+	// 	free(current);
+	// }
+	// // else if match, we must point previous->next to current->next and delete
+	// else if (strcmp(current->key, k) == 0) {
+	// 	previous->next = current->next;
+	// 	free(current);
+	// }
+	// else if (current == NULL) {
+	// 	return; // node wasn't found in hashLink chain, return
+	// }
 
 }
 
