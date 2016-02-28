@@ -1,34 +1,3 @@
-DFSRecursive
-
-graphTestNumber = 1
-shawn@shawn-VirtualBox:~/osu-cs261/a7/src$ ./progDFS
-*****		 This graph has 3 Vertices and 3 Edges
-A: B, C
-B: A, C
-C: B, A
-
-Computing reachability using DFS
-A to B			reachable!
-A to C			reachable!
-B to C			reachable!
-
-
-BFS
-*****		 This graph has 3 Vertices and 3 Edges
-A: B, C
-B: A, C
-C: B, A
-
-Computing reachability using DFS
-A to B			reachable!
-A to C			reachable!
-B to C			reachable!
-
-
-******************
-
-#2  -- USING MY FUNCTION!!
-
 *****		 This graph has 8 Vertices and 10 Edges
 A: H, F
 B: D, H, E
@@ -39,7 +8,7 @@ F: C, A
 G: C
 H: A, B, E, D
 
-Computing reachability using DFS
+Computing reachability using BFS
 A to B			reachable!
 A to C			reachable!
 A to D			reachable!

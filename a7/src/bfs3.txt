@@ -26,7 +26,7 @@ X: H
 Y: 
 Z: H
 
-Computing reachability using DFS
+Computing reachability using BFS
 A to B			***UNREACHABLE***
 A to C			***UNREACHABLE***
 A to D			***UNREACHABLE***
