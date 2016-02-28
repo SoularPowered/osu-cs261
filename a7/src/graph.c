@@ -223,6 +223,40 @@ int DFSRecursive(Graph* g, Vertex* source, Vertex* destination)
 int DFS(Graph* g, Vertex* source, Vertex* destination)
 {
 	/* FIXME you will write this */
+	Vertex* currVert = NULL;
+	Vertex* currNeighbor = NULL;
+	int i = 0; // used to loop through Vertex numNeighbors
+
+	clearVisited(g);
+
+	// Add source to stack
+	cirListDeque stack;
+	initCirListDeque(&stack);
+	addFrontCirListDeque(&stack, source);
+
+	// while stack is not empty
+	while (!isEmptyCirListDeque(&stack)) {
+		// get and remove top vertex from stack
+		currVert = frontCirListDeque(&stack);
+		removeFrontCirListDeque(&stack);
+
+		// if currVert is known to be reachable, discard
+		if (currVert->isVisited == 1) continue;
+		else {
+			currVert->isVisited = 1; // add v to set of reachable vertices
+			// for all neighbors, v_j, of v
+			for (i = 0; i < currVert->numNeighbors; i++) {
+				// if v_j is not in set of reachable vertices, add to stack
+				currNeighbor = currVert->neighbors[i];
+				if (currNeighbor == destination) {
+					return 1;
+				}
+				if (currNeighbor->isVisited == 0) {
+					addFrontCirListDeque(&stack, currNeighbor);
+				}
+			}
+		}
+	}
 	return 0;
 }
 
@@ -236,5 +270,40 @@ int DFS(Graph* g, Vertex* source, Vertex* destination)
 int BFS(Graph* g, Vertex* source, Vertex* destination)
 {
 	/* FIXME you will write this */
+	/* FIXME you will write this */
+	Vertex* currVert = NULL;
+	Vertex* currNeighbor = NULL;
+	int i = 0; // used to loop through Vertex numNeighbors
+
+	clearVisited(g);
+
+	// Add source to end of queue
+	cirListDeque queue;
+	initCirListDeque(&queue);
+	addBackCirListDeque(&queue, source);
+
+	// while queue is not empty
+	while (!isEmptyCirListDeque(&queue)) {
+		// get and remove front vertex from queue
+		currVert = frontCirListDeque(&queue);
+		removeFrontCirListDeque(&queue);
+
+		// if currVert is known to be reachable, discard
+		if (currVert->isVisited == 1) continue;
+		else {
+			currVert->isVisited = 1; // add v to set of reachable vertices
+			// for all neighbors, v_j, of v
+			for (i = 0; i < currVert->numNeighbors; i++) {
+				// if v_j is not in set of reachable vertices, add to queue
+				currNeighbor = currVert->neighbors[i];
+				if (currNeighbor == destination) {
+					return 1;
+				}
+				if (currNeighbor->isVisited == 0) {
+					addBackCirListDeque(&queue, currNeighbor);
+				}
+			}
+		}
+	}
 	return 0;
 }
