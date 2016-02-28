@@ -1,3 +1,10 @@
+/*
+Author: Shawn S Hillyer
+Class: CS 261-400
+Date: 02/21/2016
+Assignment 6
+*/
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

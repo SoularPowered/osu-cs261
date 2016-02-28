@@ -83,8 +83,6 @@ void _resizeOpenHashTable (struct openHashTable *ht) {
 	int newSize = ht->tableSize * 2;
 	TYPE** newTable = (TYPE *) malloc(newSize * sizeof(TYPE *));
 	assert(newTable != 0);
-	TYPE** tempTable = (TYPE *) malloc(newSize * sizeof(TYPE *));
-	assert(tempTable != 0);
 
 	// copy to a temp array
 	for (i = 0; i < ht->tablesize; i++) {
@@ -100,7 +98,7 @@ void _resizeOpenHashTable (struct openHashTable *ht) {
 	// rehash everything into new array
 	for (i = 0; i < ht->tablesize; i++) {
 		if (ht->data[i] != NULL) {
-			openHashTableAdd(ht, tempTable[i]);
+			openHashTableAdd(ht, newTable[i]);
 		}
 	}
 	free(tempTable);
